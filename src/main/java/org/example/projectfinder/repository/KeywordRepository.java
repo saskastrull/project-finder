@@ -1,6 +1,6 @@
-package org.example.projectfinder.repositories;
+package org.example.projectfinder.repository;
 
-import org.example.projectfinder.models.entities.Keyword;
+import org.example.projectfinder.model.entity.Keyword;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface KeywordRepository extends JpaRepository<Keyword, Long> {
