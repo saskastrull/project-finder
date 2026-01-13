@@ -1,5 +1,6 @@
 package org.example.projectfinder.service;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.example.projectfinder.model.dto.KeywordDto;
 import org.example.projectfinder.model.entity.Keyword;
@@ -16,7 +17,7 @@ public class KeywordService {
 
     private final KeywordRepository keywordRepository;
 
-    public List<KeywordDto> getAllKeywords() {
+    public List<KeywordDto> getKeywords() {
         try {
             List<Keyword> keywords = keywordRepository.findAll();
             return keywords.stream()
@@ -28,8 +29,17 @@ public class KeywordService {
         }
     }
 
-    // test
-    public Keyword createKeyword(Keyword keyword) {
-        return keywordRepository.save(keyword);
+    @Transactional
+    public KeywordDto createKeyword(KeywordDto keywordDto) {
+        return null;
+    }
+
+    @Transactional
+    public KeywordDto updateKeyword(Long id, KeywordDto keywordDto) {
+        return null;
+    }
+
+    public void deleteKeyword(Long id) {
+        keywordRepository.deleteById(id);
     }
 }

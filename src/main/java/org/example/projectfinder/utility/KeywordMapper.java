@@ -9,6 +9,7 @@ public class KeywordMapper {
 
     public static KeywordDto toDto(Keyword keyword) {
         return new KeywordDto(
+                keyword.getKeywordId(),
                 keyword.getKeyword()
         );
     }

@@ -1,34 +1,35 @@
 package org.example.projectfinder.model.dto;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.example.projectfinder.model.entity.Keyword;
 
 import java.time.LocalDate;
 import java.util.Set;
 
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class ProjectDto {
 
-    @Getter
+    private Long projectId;
+
     private LocalDate startDate;
-    @Getter
+
     private LocalDate endDate;
-    @Getter
+
+    @NotBlank(message = "Description is required")
     private String description;
-    @Getter
+
+    @Size(max = 100, message = "Character limit is set to 100")
     private String location;
-    @Getter
+
     private String url;
-    @Getter
+
     private Set<Keyword> keywords;
-
-    public ProjectDto() {}
-
-    public ProjectDto(LocalDate startDate, LocalDate endDate, String description, String location, String url, Set<Keyword> keywords) {
-        this.startDate = startDate;
-        this.endDate = endDate;
-        this.description = description;
-        this.location = location;
-        this.url = url;
-        this.keywords = keywords;
-    }
 }

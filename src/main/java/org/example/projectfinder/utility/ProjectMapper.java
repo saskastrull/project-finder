@@ -9,6 +9,7 @@ public class ProjectMapper {
 
     public static ProjectDto toDto(Project project) {
         return new ProjectDto(
+                project.getProjectId(),
                 project.getStartDate(),
                 project.getEndDate(),
                 project.getDescription(),
