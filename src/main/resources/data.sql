@@ -5,11 +5,11 @@ VALUES
     ('remote'),
     ('python');
 
-INSERT INTO project (description, location, url)
+INSERT INTO project (description, location, hours, url)
 VALUES
-    ('Beskrivning av konsultuppdrag', 'Hawkins', 'https://1'),
-    ('Ännu en beskrivning av konsultuppdrag', 'Östersund', 'https://2'),
-    ('En till beskrivning av konsultuppdrag', 'Derry', 'https://3');
+    ('Beskrivning av konsultuppdrag', 'Hawkins', 50, 'https://1'),
+    ('Ännu en beskrivning av konsultuppdrag', 'Östersund', 50, 'https://2'),
+    ('En till beskrivning av konsultuppdrag', 'Derry', 100, 'https://3');
 
 INSERT INTO project_keyword (project_id, keyword_id)
 VALUES

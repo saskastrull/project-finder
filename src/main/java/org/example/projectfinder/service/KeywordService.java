@@ -1,45 +1,67 @@
 package org.example.projectfinder.service;
 
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.example.projectfinder.exception.ResourceNotFoundException;
 import org.example.projectfinder.model.dto.KeywordDto;
 import org.example.projectfinder.model.entity.Keyword;
+import org.example.projectfinder.model.entity.Project;
 import org.example.projectfinder.repository.KeywordRepository;
+import org.example.projectfinder.repository.ProjectRepository;
 import org.example.projectfinder.utility.KeywordMapper;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class KeywordService {
 
     private final KeywordRepository keywordRepository;
+    private final ProjectRepository projectRepository;
 
+    @Transactional(readOnly = true)
     public List<KeywordDto> getKeywords() {
-        try {
-            List<Keyword> keywords = keywordRepository.findAll();
-            return keywords.stream()
-                    .map(KeywordMapper::toDto)
-                    .collect(Collectors.toList());
-
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+        return keywordRepository.findAll()
+                .stream()
+                .map(KeywordMapper::toDto)
+                .collect(Collectors.toList());
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
+    public KeywordDto getKeywordById(Long id) {
+        Keyword keyword = keywordRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Keyword", id));
+        return KeywordMapper.toDto(keyword);
+    }
+
     public KeywordDto createKeyword(KeywordDto keywordDto) {
-        return null;
+        Keyword keyword = KeywordMapper.toEntity(keywordDto);
+        Keyword saved = keywordRepository.save(keyword);
+        return KeywordMapper.toDto(saved);
     }
 
-    @Transactional
     public KeywordDto updateKeyword(Long id, KeywordDto keywordDto) {
-        return null;
+        Keyword keyword = keywordRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Keyword", id));
+        keyword.setKeyword(keywordDto.getKeyword());
+        return KeywordMapper.toDto(keyword);
     }
 
     public void deleteKeyword(Long id) {
+        Keyword keyword = keywordRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Keyword", id));
+
+        // Remove keyword from relevant projects before deleting
+        List<Project> projects = projectRepository.findAllByKeywordsContains(keyword);
+
+        for (Project project : projects) {
+            project.getKeywords().remove(keyword);
+        }
+
         keywordRepository.deleteById(id);
     }
 }

@@ -17,11 +17,22 @@ public class KeywordController {
 
     private final KeywordService keywordService;
 
+    /*
+    USER ENDPOINTS
+     */
     @GetMapping()
     public ResponseEntity<List<KeywordDto>> getAllKeywords() {
         return ResponseEntity.ok(keywordService.getKeywords());
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<KeywordDto> getKeywordById(@PathVariable Long id) {
+        return ResponseEntity.ok(keywordService.getKeywordById(id));
+    }
+
+    /*
+    ADMIN ENDPOINTS
+     */
     @PostMapping
     public ResponseEntity<KeywordDto> createKeyword(
             @Valid @RequestBody KeywordDto keywordDto) {

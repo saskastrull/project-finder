@@ -2,6 +2,7 @@ package org.example.projectfinder.model.entity;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -11,6 +12,7 @@ import java.util.Set;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
 @Getter
 public class Project {
 
@@ -22,6 +24,9 @@ public class Project {
     @Column(nullable = false)
     private String description;
     private String location;
+    private LocalDate deadline;
+    private String company;
+    private int hours; // percentage
     @Column(nullable = false)
     private String url;
 
@@ -33,11 +38,15 @@ public class Project {
     )
     private Set<Keyword> keywords = new HashSet<>();
 
-    public Project(LocalDate startDate, LocalDate endDate, String description, String location, String url) {
+    public Project(LocalDate startDate, LocalDate endDate, String description, String location,
+                   LocalDate deadline, String company, int hours, String url) {
         this.startDate = startDate;
         this.endDate = endDate;
         this.description = description;
         this.location = location;
+        this.deadline = deadline;
+        this.company = company;
+        this.hours = hours;
         this.url = url;
     }
 }

@@ -1,13 +1,11 @@
 package org.example.projectfinder.model.entity;
 
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
 @Getter
 public class Keyword {
 
@@ -17,8 +15,4 @@ public class Keyword {
     @Column(length = 30, nullable = false)
     @Setter
     private String keyword;
-
-    public Keyword(String keyword) {
-        this.keyword = keyword;
-    }
 }

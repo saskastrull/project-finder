@@ -22,8 +22,11 @@ public class WebScraper {
         LocalDate endDate = LocalDate.of(2027, 9, 3);
         String description = "beskrivning";
         String location = "plats";
+        LocalDate expiration = LocalDate.of(2020, 9, 3);
+        String company = "fujitsu";
+        int hours = 100;
         String url = "länk";
 
-        projectService.createProject(startDate, endDate, description, location, url);
+        projectService.createProject(startDate, endDate, description, location, expiration, company, hours, url);
     }
 }

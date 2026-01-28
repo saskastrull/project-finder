@@ -13,4 +13,11 @@ public class KeywordMapper {
                 keyword.getKeyword()
         );
     }
+
+    public static Keyword toEntity(KeywordDto keywordDto) {
+        return new Keyword(
+                keywordDto.getId(),
+                keywordDto.getKeyword()
+        );
+    }
 }

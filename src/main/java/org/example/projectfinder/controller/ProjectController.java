@@ -17,6 +17,9 @@ public class ProjectController {
 
     private final ProjectService projectService;
 
+    /*
+    USER ENDPOINTS
+     */
     @GetMapping
     public ResponseEntity<List<ProjectDto>> getProjects(
             @RequestParam(required = false)
@@ -25,10 +28,12 @@ public class ProjectController {
 
             @RequestParam(required = false)
             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
-            LocalDate endDate) {
+            LocalDate endDate,
 
+            @RequestParam(required = false)
+            Long keywordId) {
         return ResponseEntity.ok(
-                projectService.getProjects(startDate, endDate)
+                projectService.getProjects(startDate, endDate, keywordId)
         );
     }
 
@@ -37,12 +42,18 @@ public class ProjectController {
         return ResponseEntity.ok(projectService.getProjectById(id));
     }
 
-    // ADMIN ENDPOINT
+    /*
+    ADMIN ENDPOINTS
+     */
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteProject(@PathVariable Long id) {
         projectService.deleteProject(id);
         return ResponseEntity.noContent().build();
     }
 
-    // eventuell endpoint för att clear alla projekt
+    @DeleteMapping
+    public ResponseEntity<Void> deleteAllProjects() {
+        projectService.deleteAllProjects();
+        return ResponseEntity.noContent().build();
+    }
 }

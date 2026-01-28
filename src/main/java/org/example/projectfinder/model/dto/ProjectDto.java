@@ -18,18 +18,15 @@ import java.util.Set;
 public class ProjectDto {
 
     private Long projectId;
-
     private LocalDate startDate;
-
     private LocalDate endDate;
-
     @NotBlank(message = "Description is required")
     private String description;
-
     @Size(max = 100, message = "Character limit is set to 100")
     private String location;
-
+    private LocalDate expiration;
+    private String company;
+    private int hours;
     private String url;
-
     private Set<Keyword> keywords;
 }

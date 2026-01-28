@@ -14,6 +14,9 @@ public class ProjectMapper {
                 project.getEndDate(),
                 project.getDescription(),
                 project.getLocation(),
+                project.getDeadline(),
+                project.getCompany(),
+                project.getHours(),
                 project.getUrl(),
                 project.getKeywords()
         );
