@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import org.example.projectfinder.exception.ResourceNotFoundException;
 import org.example.projectfinder.model.dto.KeywordDto;
 import org.example.projectfinder.model.entity.Keyword;
-import org.example.projectfinder.model.entity.Project;
 import org.example.projectfinder.repository.KeywordRepository;
 import org.example.projectfinder.repository.ProjectRepository;
 import org.example.projectfinder.utility.KeywordMapper;
@@ -21,7 +20,6 @@ import java.util.stream.Collectors;
 public class KeywordService {
 
     private final KeywordRepository keywordRepository;
-    private final ProjectRepository projectRepository;
 
     @Transactional(readOnly = true)
     public List<KeywordDto> getKeywords() {
@@ -54,14 +52,6 @@ public class KeywordService {
     public void deleteKeyword(Long id) {
         Keyword keyword = keywordRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Keyword", id));
-
-        // Remove keyword from relevant projects before deleting
-        List<Project> projects = projectRepository.findAllByKeywordsContains(keyword);
-
-        for (Project project : projects) {
-            project.getKeywords().remove(keyword);
-        }
-
-        keywordRepository.deleteById(id);
+        keywordRepository.delete(keyword);
     }
 }

@@ -14,7 +14,6 @@ import lombok.Setter;
 public class KeywordDto {
 
     private Long id;
-
     @NotBlank(message = "Keyword is required")
     @Size(max = 50, message = "Character limit is set to 50")
     private String keyword;

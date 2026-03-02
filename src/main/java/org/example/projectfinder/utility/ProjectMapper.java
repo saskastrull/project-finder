@@ -15,10 +15,20 @@ public class ProjectMapper {
                 project.getDescription(),
                 project.getLocation(),
                 project.getDeadline(),
-                project.getCompany(),
                 project.getHours(),
-                project.getUrl(),
-                project.getKeywords()
+                project.getUrl()
+        );
+    }
+
+    public static Project toEntity(ProjectDto projectDto) {
+        return new Project(
+                projectDto.getStartDate(),
+                projectDto.getEndDate(),
+                projectDto.getDescription(),
+                projectDto.getLocation(),
+                projectDto.getExpiration(),
+                projectDto.getHours(),
+                projectDto.getUrl()
         );
     }
 }

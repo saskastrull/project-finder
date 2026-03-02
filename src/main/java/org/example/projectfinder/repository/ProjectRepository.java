@@ -9,5 +9,5 @@ import java.util.List;
 
 public interface ProjectRepository extends JpaRepository<Project, Long>,
         JpaSpecificationExecutor<Project> {
-    List<Project> findAllByKeywordsContains(Keyword keyword);
+    boolean existsByUrl(String url);
 }

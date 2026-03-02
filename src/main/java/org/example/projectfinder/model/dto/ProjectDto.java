@@ -6,10 +6,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.example.projectfinder.model.entity.Keyword;
 
 import java.time.LocalDate;
-import java.util.Set;
 
 @Getter
 @Setter
@@ -25,8 +23,6 @@ public class ProjectDto {
     @Size(max = 100, message = "Character limit is set to 100")
     private String location;
     private LocalDate expiration;
-    private String company;
     private int hours;
     private String url;
-    private Set<Keyword> keywords;
 }

@@ -26,8 +26,7 @@ public class ProjectService {
     @Transactional(readOnly = true)
     public List<ProjectDto> getProjects(
             LocalDate startDate,
-            LocalDate endDate,
-            Long keywordId) {
+            LocalDate endDate) {
 
         if (startDate != null && endDate != null && startDate.isAfter(endDate)) {
             throw new IllegalArgumentException("startDate must be before endDate");
@@ -35,8 +34,7 @@ public class ProjectService {
 
         Specification<Project> spec = Specification
                 .where(ProjectSpecifications.startDateAfter(startDate))
-                .and(ProjectSpecifications.endDateBefore(endDate))
-                .and(ProjectSpecifications.hasKeyword(keywordId));
+                .and(ProjectSpecifications.endDateBefore(endDate));
 
         return projectRepository.findAll(spec).stream()
                 .map(ProjectMapper::toDto)
@@ -61,11 +59,27 @@ public class ProjectService {
         projectRepository.deleteAll();
     }
 
-    // Called for scraping
-    public void createProject(LocalDate startDate, LocalDate endDate, String description, String location,
-                              LocalDate deadline, String company, int hours, String url) {
-        projectRepository.save(new Project(startDate, endDate, description, location,
-                deadline, company, hours, url));
-        log.info("(wip) project stored with location: {}", location);
+    /**
+     * Save all scraped projects from a single website to database.
+     * Method is called in ScraperService for each website to be scraped.
+     * @param scrapedProjects list of projects scraped from one website
+     */
+    @Transactional
+    public void createScrapedProjects(List<ProjectDto> scrapedProjects) {
+        for (ProjectDto dto : scrapedProjects) {
+            // Check if URL already exists in database to avoid duplicates
+            if (!projectRepository.existsByUrl(dto.getUrl())) {
+                Project project = new Project(
+                        dto.getStartDate(),
+                        dto.getEndDate(),
+                        dto.getDescription(),
+                        dto.getLocation(),
+                        dto.getExpiration(),
+                        dto.getHours(),
+                        dto.getUrl()
+                );
+                projectRepository.save(project);
+            }
+        }
     }
 }
