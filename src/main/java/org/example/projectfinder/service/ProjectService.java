@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.example.projectfinder.exception.ResourceNotFoundException;
 import org.example.projectfinder.model.dto.ProjectDto;
 import org.example.projectfinder.model.entity.Project;
+import org.example.projectfinder.repository.KeywordRepository;
 import org.example.projectfinder.repository.ProjectRepository;
 import org.example.projectfinder.repository.specification.ProjectSpecifications;
 import org.example.projectfinder.utility.ProjectMapper;
@@ -22,6 +23,8 @@ import java.util.List;
 public class ProjectService {
 
     private final ProjectRepository projectRepository;
+
+    private final KeywordRepository keywordRepository;
 
     @Transactional(readOnly = true)
     public List<ProjectDto> getProjects(
@@ -60,26 +63,46 @@ public class ProjectService {
     }
 
     /**
-     * Save all scraped projects from a single website to database.
+     * Saves all scraped projects from a single website to database.
      * Method is called in ScraperService for each website to be scraped.
      * @param scrapedProjects list of projects scraped from one website
      */
     @Transactional
     public void createScrapedProjects(List<ProjectDto> scrapedProjects) {
+
+        List<String> keywords = keywordRepository.findAll()
+                .stream()
+                .map(k -> k.getKeyword().toLowerCase())
+                .toList();
+
         for (ProjectDto dto : scrapedProjects) {
-            // Check if URL already exists in database to avoid duplicates
-            if (!projectRepository.existsByUrl(dto.getUrl())) {
-                Project project = new Project(
-                        dto.getStartDate(),
-                        dto.getEndDate(),
-                        dto.getDescription(),
-                        dto.getLocation(),
-                        dto.getExpiration(),
-                        dto.getHours(),
-                        dto.getUrl()
-                );
-                projectRepository.save(project);
+
+            // Skip if URL already exists in database (unique value to avoid duplicates)
+            if (projectRepository.existsByUrl(dto.getUrl())) {
+                continue;
             }
+
+            // Check if description contains any keyword
+            String description = dto.getDescription().toLowerCase();
+
+            boolean matchesKeyword = keywords.stream()
+                    .anyMatch(description::contains);
+
+            if (!matchesKeyword) {
+                continue;
+            }
+
+            Project project = new Project(
+                    dto.getStartDate(),
+                    dto.getEndDate(),
+                    dto.getDescription(),
+                    dto.getLocation(),
+                    dto.getExpiration(),
+                    dto.getHours(),
+                    dto.getUrl()
+            );
+
+            projectRepository.save(project);
         }
     }
 }

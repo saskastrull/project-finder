@@ -11,7 +11,7 @@ public class ScraperScheduler {
 
     private final ScraperService scraperService;
 
-    @Scheduled (fixedRate = 90000)
+    @Scheduled (fixedRate = 90000) // For testing, use (cron = "0 0 1 * * ?") later...
     public void runScrapers() {
         scraperService.scrapeAll();
     }

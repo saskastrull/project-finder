@@ -1,8 +1,7 @@
 INSERT INTO keyword (keyword)
 VALUES
-    ('junior'),
     ('java'),
-    ('remote'),
+    ('senior'),
     ('python');
 
 INSERT INTO project (description, hours, url)

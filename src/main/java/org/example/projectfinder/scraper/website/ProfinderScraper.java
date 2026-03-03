@@ -15,8 +15,11 @@ public class ProfinderScraper implements ScraperInterface {
     private static final String LISTING_URL = "https://www.profinder.se/lediga-uppdrag";
 
     /**
-     * Scrape the site of all projects.
-     * @return list of all scraped projects from this site
+     * Scrapes the Profinder site of all projects.
+     *
+     *
+     *
+     * @return list of scraped projects mapped to {@link ProjectDto}
      */
     @Override
     public List<ProjectDto> scrape() {
