@@ -17,13 +17,21 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Scraper implementation for the Verama website.
- *
- * <p>This scraper parses a JSON GET response using Jackson.</p>
+ * Scrapes the Verama website's backend using a GET request
+ * and parses the data to a list of {@link ProjectDto}.
+ * <p>
+ * Extracts and parses the JSON GET response using Jackson.
+ * Both page size (found in {@link #REQUEST_URL}) and amount
+ * of pages (totalPages in {@link #scrape()}) are adjustable,
+ * but it's recommended to keep the page size large to avoid
+ * making repeated GET requests.
  */
 @Slf4j
 @Component
 public class VeramaScraper implements ScraperInterface {
+
+    // Name tag to be stored in each ProjectDto
+    private static final String SITE_NAME = "Verama";
 
     // Found in DevTools -> Fetch/XHR
     // Adjust "size" depending on how many projects to get per page, currently size=500 (only one page needed to collect all jobs on the site)
@@ -36,12 +44,10 @@ public class VeramaScraper implements ScraperInterface {
     private static final ObjectMapper mapper = new ObjectMapper();
 
     /**
-     * Scrapes the Verama site of all projects.
-     *
-     * <p>Fetches a JSON GET response of adjustable page size
+     * Fetches a JSON GET response of adjustable page size
      * containing job listings and parses the JSON nodes to
-     * {@link ProjectDto}.</p>
-     *
+     * {@link ProjectDto}.
+
      * @return list of scraped projects mapped to {@link ProjectDto}
      */
     @Override
@@ -86,6 +92,7 @@ public class VeramaScraper implements ScraperInterface {
 
                 for (JsonNode job : contentNode) {
                     ProjectDto dto = mapToDto(job);
+                    dto.setOrigin(SITE_NAME);
                     scrapedProjects.add(dto);
                 }
 

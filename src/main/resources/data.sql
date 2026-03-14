@@ -2,8 +2,8 @@ INSERT INTO keyword (keyword)
 VALUES
     ('java'),
     ('senior'),
-    ('python');
+    ('engineer');
 
-INSERT INTO project (description, hours, url)
+INSERT INTO project (description, hours, origin, url)
 VALUES
-    ('TEST', 100, 'https://123.org');
+    ('TEST', 100,'hemsida', 'https://123.org');

@@ -5,7 +5,6 @@ import org.example.projectfinder.exception.ResourceNotFoundException;
 import org.example.projectfinder.model.dto.KeywordDto;
 import org.example.projectfinder.model.entity.Keyword;
 import org.example.projectfinder.repository.KeywordRepository;
-import org.example.projectfinder.repository.ProjectRepository;
 import org.example.projectfinder.utility.KeywordMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,6 +19,7 @@ import java.util.stream.Collectors;
 public class KeywordService {
 
     private final KeywordRepository keywordRepository;
+    private final KeywordMapper keywordMapper;
 
     @Transactional(readOnly = true)
     public List<KeywordDto> getKeywords() {
@@ -42,6 +42,30 @@ public class KeywordService {
         return KeywordMapper.toDto(saved);
     }
 
+    public List<KeywordDto> updateKeywords(List<KeywordDto> keywordDtos) {
+        // Normalize first, remove blank spaces + make lowercase
+        List<KeywordDto> normalized = keywordDtos.stream()
+                .map(dto -> new KeywordDto(
+                        null,
+                        dto.getKeyword().trim().toLowerCase()
+                ))
+                .filter(dto -> !dto.getKeyword().isBlank())
+                .distinct()
+                .toList();
+
+        // Map normalized DTOs to keywords
+        List<Keyword> keywords = normalized.stream()
+                .map(KeywordMapper::toEntity)
+                .toList();
+
+        keywordRepository.deleteAll();
+        keywordRepository.saveAll(keywords);
+
+        return keywords.stream()
+                .map(KeywordMapper::toDto)
+                .toList();
+    }
+
     public KeywordDto updateKeyword(Long id, KeywordDto keywordDto) {
         Keyword keyword = keywordRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Keyword", id));
@@ -53,5 +77,9 @@ public class KeywordService {
         Keyword keyword = keywordRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Keyword", id));
         keywordRepository.delete(keyword);
+    }
+
+    public void deleteKeywords() {
+        keywordRepository.deleteAll();
     }
 }

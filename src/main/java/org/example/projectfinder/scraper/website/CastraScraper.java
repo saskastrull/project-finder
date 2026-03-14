@@ -18,14 +18,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Scraper implementation for the Castra website.
- *
- * <p>This scraper retrieves job listings via a GraphQL POST request to a RedwoodJS backend
- * and parses the response using Jackson.</p>
+ * Scrapes the Castra website's RedwoodJS backend using a GraphQL
+ * POST request and parses the data to a list of {@link ProjectDto}.
+ * <p>
+ * Pagination logic works by incrementing the page variable sent in
+ * the GraphQL query.
  */
 @Slf4j
 @Component
 public class CastraScraper implements ScraperInterface {
+
+    // Name tag to be stored in each ProjectDto
+    private static final String SITE_NAME = "Castra";
 
     // Found in DevTools -> Fetch/XHR
     private static final String REQUEST_URL = "https://partnernatverk.castra.se/.redwood/functions/graphql";
@@ -34,10 +38,8 @@ public class CastraScraper implements ScraperInterface {
     private static final ObjectMapper mapper = new ObjectMapper();
 
     /**
-     * Scrapes the Castra site of all projects.
-     *
-     * <p>Fetches a JSON POST response containing job listings
-     * and parses the JSON nodes to {@link ProjectDto}.</p>
+     * Fetches a JSON POST response containing job listings
+     * and parses the JSON nodes to {@link ProjectDto}.
      *
      * @return list of scraped projects mapped to {@link ProjectDto}
      */
@@ -67,13 +69,15 @@ public class CastraScraper implements ScraperInterface {
                 JsonNode root = mapper.readTree(response.body());
                 JsonNode requestsNode = root.path("data").path("requestsPage").path("requests");
 
-                // If there's no more pages
+                // If there are no more pages
                 if (!requestsNode.isArray() || requestsNode.isEmpty()) {
+                    log.info("[Castra] No more content, stopping");
                     break;
                 }
 
                 for (JsonNode node : requestsNode) {
                     ProjectDto dto = mapToDto(node);
+                    dto.setOrigin(SITE_NAME);
                     scrapedProjects.add(dto);
                 }
 
@@ -90,8 +94,8 @@ public class CastraScraper implements ScraperInterface {
     }
 
     /**
-     * Builds request body based on GraphQL query found in DevTools.
-     * @param page used as variable in GraphQL query
+     * Builds request body based on the GraphQL POST query found in DevTools.
+     * @param page used as variable in the GraphQL query
      * @return JSON response containing job listings
      */
     private String buildRequestBody(int page) {
@@ -105,9 +109,7 @@ public class CastraScraper implements ScraperInterface {
     }
 
     /**
-     * Maps node of JSON into DTO.
-     * @param node to be converted into DTO
-     * @return DTO to save in scraped projects
+     * Maps a JSON node to {@link ProjectDto}.
      */
     private ProjectDto mapToDto(JsonNode node) {
         ProjectDto dto = new ProjectDto();
@@ -141,9 +143,7 @@ public class CastraScraper implements ScraperInterface {
     }
 
     /**
-     * Formats Castra's full ISO dates into LocalDates.
-     * @param dateNode ISO response example: "deadlineDate": "2026-02-19T00:00:00.000Z"
-     * @return LocalDate to be stored in DTO
+     * Parses a date into a LocalDate to be stored in {@link ProjectDto}.
      */
     private LocalDate parseDate(JsonNode dateNode) {
         try {

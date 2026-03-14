@@ -17,12 +17,16 @@ public class ScraperService {
     private final List<ScraperInterface> scrapers;
 
     public void scrapeAll() {
+
+        // Clear database of old projects
+        projectService.deleteAllProjects();
+
         for (ScraperInterface scraper : scrapers) {
             try {
                 List<ProjectDto> scraped = scraper.scrape();
                 projectService.createScrapedProjects(scraped);
             } catch (Exception e) {
-                log.error("[ScraperService] Scraper {} failed: {}", scraper.getClass(), String.valueOf(e));
+                log.error("[ScraperService] Scraper {} failed", scraper.getClass().getSimpleName(), e);
             }
         }
     }

@@ -24,5 +24,6 @@ public class ProjectDto {
     private String location;
     private LocalDate expiration;
     private int hours;
+    private String origin;
     private String url;
 }

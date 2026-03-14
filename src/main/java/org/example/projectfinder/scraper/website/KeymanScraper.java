@@ -15,25 +15,29 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Scraper implementation for the Keyman website.
- *
- * <p>This is a traditional Jsoup scraper which extracts links to individual job pages and
- * parses the information to DTOs.</p>
+ * Scrapes the Keyman website document and parses the data to a list of
+ * {@link ProjectDto}.
+ * <p>
+ * Extracts the links to individual job/project pages from the main doc
+ * and parses the information from HTML tables to DTOs. Pagination works
+ * by finding the .e-load-more-anchor in the document until it's not
+ * available anymore (which means there are no more pages to load).
  */
 @Slf4j
 @Component
 public class KeymanScraper implements ScraperInterface {
 
+    // Name tag to be stored in each ProjectDto
+    private static final String SITE_NAME = "Keyman";
+
     // Doc URL
     private static final String LISTING_URL = "https://www.keyman.se/sv/uppdrag/";
 
     /**
-     * Scrapes the Keyman site of all projects.
-     *
-     * <p>This method starts from the main listing page and follows page
-     * links until no more pages are available. For each job link found,
-     * the job's detail page is fetched and parsed to {@link ProjectDto}
-     * with additional data.</p>
+     * Starts from the main listing page and follows page links
+     * (.e-load-more-anchor) until no more pages are available.
+     * For each job link found, the job's detail page is fetched
+     * and parsed to {@link ProjectDto} with additional data.
      *
      * @return list of scraped projects mapped to {@link ProjectDto}
      */
@@ -74,10 +78,11 @@ public class KeymanScraper implements ScraperInterface {
                     String title = jobEl.text().trim();
                     if (title.isBlank()) continue;
 
-                    // Set title and URL found on main page
+                    // Set title, site and URL found on main page
                     ProjectDto dto = new ProjectDto();
                     dto.setDescription(title);
                     dto.setUrl(detailUrl);
+                    dto.setOrigin(SITE_NAME);
 
                     extractDetails(dto);
 
@@ -108,8 +113,6 @@ public class KeymanScraper implements ScraperInterface {
 
     /**
      * Parses String value into LocalDate.
-     * @param text containing date
-     * @return LocalDate to be used in {@link ProjectDto}
      */
     private LocalDate parseDate(String text) {
         try {
@@ -121,8 +124,6 @@ public class KeymanScraper implements ScraperInterface {
 
     /**
      * Parses String value containing work hours into int.
-     * @param text value containing work hours
-     * @return hours as int to be used in {@link ProjectDto}
      */
     private int parseHours(String text) {
         try {
@@ -135,8 +136,6 @@ public class KeymanScraper implements ScraperInterface {
     /**
      * Handles cases where there's text in the date section, for example:
      * 2026-02-16 (Offerter kommer att behandlas löpande)
-     * @param text to extract the date from
-     * @return extracted substring containing a date
      */
     private String extractDateFromText(String text) {
         if (text == null) return null;
@@ -146,13 +145,10 @@ public class KeymanScraper implements ScraperInterface {
     }
 
     /**
-     * Fetches the detail page of a project and extracts structured metadata.
-     *
-     * <p>This method parses the HTML table found on the page and maps
-     * recognized labels ("Startdatum", "Slutdatum", "Omfattning")
-     * to their fields in the provided {@link ProjectDto}.
-     * If no table is found, the method simply returns. Also,
-     * unrecognized labels are ignored.</p>
+     * Fetches the detail page of a project and extracts structured
+     * metadata from an HTML table. If no recognized table is found,
+     * the method simply returns. Any unrecognized labels  of the
+     * table are ignored.
      *
      * @param dto containing the URL for the job page
      */
@@ -163,7 +159,7 @@ public class KeymanScraper implements ScraperInterface {
                     .timeout(10_000)
                     .get();
 
-            // Details are stored in a table inside doc
+            // Details are stored in a table
             Element table = detailDoc.selectFirst("table");
             if (table == null) {
                 return;

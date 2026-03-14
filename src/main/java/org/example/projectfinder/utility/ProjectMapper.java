@@ -16,6 +16,7 @@ public class ProjectMapper {
                 project.getLocation(),
                 project.getDeadline(),
                 project.getHours(),
+                project.getOrigin(),
                 project.getUrl()
         );
     }
@@ -28,6 +29,7 @@ public class ProjectMapper {
                 projectDto.getLocation(),
                 projectDto.getExpiration(),
                 projectDto.getHours(),
+                projectDto.getOrigin(),
                 projectDto.getUrl()
         );
     }

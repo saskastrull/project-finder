@@ -29,17 +29,20 @@ public class Project {
     private String location;
     private LocalDate deadline;
     private int hours; // speed percentage
+    @Column(nullable = false)
+    private String origin;
     @Column(nullable = false, unique = true)
     private String url;
 
     public Project(LocalDate startDate, LocalDate endDate, String description, String location,
-                   LocalDate deadline, int hours, String url) {
+                   LocalDate deadline, int hours, String origin, String url) {
         this.startDate = startDate;
         this.endDate = endDate;
         this.description = description;
         this.location = location;
         this.deadline = deadline;
         this.hours = hours;
+        this.origin = origin;
         this.url = url;
     }
 }

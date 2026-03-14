@@ -26,10 +26,13 @@ public class SecurityConfig {
                         .requestMatchers("/h2-console/**").permitAll()
 
                         // Admin only
+                        .requestMatchers(HttpMethod.POST, "/api/scraper/run").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/api/keywords/{id}").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.POST, "/api/keywords").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.PUT, "/api/keywords/{id}").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/api/keywords").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/api/projects/{id}").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/api/projects").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/api/projects").hasRole("ADMIN")
 
                         // User + admin endpoints

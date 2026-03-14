@@ -40,6 +40,12 @@ public class KeywordController {
                 .body(created);
     }
 
+    @PutMapping
+    public ResponseEntity<List<KeywordDto>> updateKeywords(
+            @Valid @RequestBody List<KeywordDto> keywordDtos) {
+        return ResponseEntity.ok(keywordService.updateKeywords(keywordDtos));
+    }
+
     @PutMapping("/{id}")
     public ResponseEntity<KeywordDto> updateKeyword(
             @PathVariable Long id,
@@ -50,6 +56,12 @@ public class KeywordController {
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteKeyword(@PathVariable Long id) {
         keywordService.deleteKeyword(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @DeleteMapping
+    public ResponseEntity<Void> deleteKeywords() {
+        keywordService.deleteKeywords();
         return ResponseEntity.noContent().build();
     }
 }
