@@ -1,73 +1,96 @@
 package org.example.projectfinder.config;
 
+import org.example.projectfinder.security.JwtAuthFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.Customizer;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
+import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.crypto.password.NoOpPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+/**
+ * Spring Security configuration.
+ * - Defines in-memory users
+ * - Adds JWT filter
+ * - Configures protected endpoints
+ */
 @Configuration
-@EnableWebSecurity
 public class SecurityConfig {
 
-    @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    private final JwtAuthFilter jwtAuthFilter;
 
-        http
-                .authorizeHttpRequests(auth -> auth
-                        // Permit all for testing
-                        .requestMatchers("/h2-console/**").permitAll()
-
-                        // Admin only
-                        .requestMatchers(HttpMethod.POST, "/api/scraper/run").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.DELETE, "/api/keywords/{id}").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.POST, "/api/keywords").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.PUT, "/api/keywords/{id}").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.PUT, "/api/keywords").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.DELETE, "/api/projects/{id}").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.DELETE, "/api/projects").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.DELETE, "/api/projects").hasRole("ADMIN")
-
-                        // User + admin endpoints
-                        .requestMatchers(HttpMethod.GET, "/api/keywords").hasAnyRole("USER", "ADMIN")
-                        .requestMatchers(HttpMethod.GET, "/api/keywords/{id}").hasAnyRole("USER", "ADMIN")
-                        .requestMatchers(HttpMethod.GET, "/api/projects").hasAnyRole("USER", "ADMIN")
-                        .requestMatchers(HttpMethod.GET, "/api/projects/{id}").hasAnyRole("USER", "ADMIN")
-
-                        .anyRequest().authenticated()
-                )
-                .httpBasic(Customizer.withDefaults())
-                .formLogin(Customizer.withDefaults())
-                .csrf(csrf -> csrf // disable CSRF
-                        .ignoringRequestMatchers("/h2-console/**",
-                                "/api/**"))
-                .headers(headers -> headers
-                        .frameOptions(HeadersConfigurer.FrameOptionsConfig::disable));
-
-        return http.build();
+    public SecurityConfig(JwtAuthFilter jwtAuthFilter) {
+        this.jwtAuthFilter = jwtAuthFilter;
     }
 
+    // --- Hardcoded users ---
     @Bean
-    public UserDetailsService userDetailsService() {
-        UserDetails user = User
-                .withUsername("user")
-                .password("{noop}user")
+    public InMemoryUserDetailsManager userDetailsService() {
+        UserDetails user = User.withUsername("user")
+                .password("user") // plaintext for testing
                 .roles("USER")
                 .build();
 
-        UserDetails admin = User
-                .withUsername("admin")
-                .password("{noop}admin")
+        UserDetails admin = User.withUsername("admin")
+                .password("admin") // plaintext for testing
                 .roles("ADMIN")
                 .build();
 
         return new InMemoryUserDetailsManager(user, admin);
+    }
+
+    // --- Password encoder ---
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return NoOpPasswordEncoder.getInstance(); // plaintext passwords
+    }
+
+    // --- AuthenticationManager (needed for login endpoint) ---
+    @Bean
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
+        return config.getAuthenticationManager();
+    }
+
+    // --- Security filter chain ---
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+
+        http
+                .cors(Customizer.withDefaults())
+                .csrf(csrf -> csrf.disable())
+                .sessionManagement(session ->
+                        session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                )
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers(HttpMethod.POST, "/api/auth/login").permitAll()
+                        .requestMatchers("/h2-console/**").permitAll()
+                        // - - - Admin endpoints - - -
+                        // Run scraper
+                        .requestMatchers(HttpMethod.POST, "/api/scraper/run").hasRole("ADMIN")
+                        // Keywords
+                        .requestMatchers(HttpMethod.POST, "/api/keywords/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/api/keywords/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/api/keywords/**").hasRole("ADMIN")
+                        // Projects
+
+                        // - - - User endpoints - - -
+                        .anyRequest().authenticated()
+                )
+                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
+                .headers(headers ->
+                        headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::disable)
+                );
+
+        return http.build();
     }
 }
