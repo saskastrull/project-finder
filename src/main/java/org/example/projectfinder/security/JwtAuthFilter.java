@@ -20,14 +20,14 @@ import java.io.IOException;
  */
 @Component
 public class JwtAuthFilter extends OncePerRequestFilter {
+
     private final JwtService jwtService;
+    private final UserDetailsService userDetailsService;
 
-    @Lazy
-    @Autowired
-    private UserDetailsService userDetailsService;
-
-    public JwtAuthFilter(JwtService jwtService) {
+    public JwtAuthFilter(JwtService jwtService,
+                         UserDetailsService userDetailsService) {
         this.jwtService = jwtService;
+        this.userDetailsService = userDetailsService;
     }
 
     @Override
