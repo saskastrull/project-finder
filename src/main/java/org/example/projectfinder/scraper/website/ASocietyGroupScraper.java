@@ -200,7 +200,7 @@ import java.util.*;
 
             dto.setEndDate(parseDate(node.path("requisition_enddate").asText(null)));
 
-            dto.setExpiration(parseDate(node.path("requisition_offerduedate").asText(null)));
+            dto.setDeadline(parseDate(node.path("requisition_offerduedate").asText(null)));
 
             dto.setLocation(node.path("requisition_locationid").asText(null));
 

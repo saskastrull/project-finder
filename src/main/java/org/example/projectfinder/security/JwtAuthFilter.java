@@ -15,6 +15,9 @@ import org.springframework.context.annotation.Lazy;
 
 import java.io.IOException;
 
+/**
+ * Runs on every request to check if the user is authenticated.
+ */
 @Component
 public class JwtAuthFilter extends OncePerRequestFilter {
     private final JwtService jwtService;
@@ -35,7 +38,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
         String path = request.getServletPath();
 
-        // Skip login endpoint and OPTIONS preflight
+        // Skip auth for the login endpoint
         if (path.equals("/api/auth/login") || request.getMethod().equals("OPTIONS")) {
             filterChain.doFilter(request, response);
             return;
@@ -48,6 +51,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             return;
         }
 
+        // Remove "Bearer " from the token substring
         try {
             String token = authHeader.substring(7);
             String username = jwtService.extractUsername(token);

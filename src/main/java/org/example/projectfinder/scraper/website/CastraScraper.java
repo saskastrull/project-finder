@@ -133,7 +133,7 @@ public class CastraScraper implements ScraperInterface {
         }
 
         if (node.hasNonNull("deadlineDate")) {
-            dto.setExpiration(parseDate(node.get("deadlineDate")));
+            dto.setDeadline(parseDate(node.get("deadlineDate")));
         }
 
         if (node.hasNonNull("marketURL")) {

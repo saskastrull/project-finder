@@ -193,7 +193,7 @@ public class KeymanScraper implements ScraperInterface {
                         break;
 
                     case "Sista svarsdatum":
-                        dto.setExpiration(parseDate(extractDateFromText(value)));
+                        dto.setDeadline(parseDate(extractDateFromText(value)));
                         break;
 
                     default:

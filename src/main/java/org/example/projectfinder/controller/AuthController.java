@@ -23,15 +23,26 @@ public class AuthController {
     @PostMapping("/login")
     public AuthResponse login(@RequestBody AuthRequest request) {
 
-        authenticationManager.authenticate(
+        // Validates credentials against SecurityConfig users (USER/ADMIN)
+        var authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         request.getUsername(),
                         request.getPassword()
                 )
         );
 
-        String token = jwtService.generateToken(request.getUsername());
+        var userDetails = (org.springframework.security.core.userdetails.UserDetails)
+                authentication.getPrincipal();
+
+        String role = userDetails.getAuthorities()
+                .iterator()
+                .next()
+                .getAuthority()
+                .replace("ROLE_", ""); // Formats to: "role": "ADMIN"
+
+        String token = jwtService.generateToken(request.getUsername(), role);
 
         return new AuthResponse(token);
     }
+
 }

@@ -22,7 +22,7 @@ public class ProjectDto {
     private String description;
     @Size(max = 100, message = "Character limit is set to 100")
     private String location;
-    private LocalDate expiration;
+    private LocalDate deadline;
     private int hours;
     private String origin;
     private String url;

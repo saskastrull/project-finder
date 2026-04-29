@@ -97,7 +97,7 @@ public class ProjectService {
                     dto.getEndDate(),
                     dto.getDescription(),
                     dto.getLocation(),
-                    dto.getExpiration(),
+                    dto.getDeadline(),
                     dto.getHours(),
                     dto.getOrigin(),
                     dto.getUrl()

@@ -27,7 +27,7 @@ public class ProjectMapper {
                 projectDto.getEndDate(),
                 projectDto.getDescription(),
                 projectDto.getLocation(),
-                projectDto.getExpiration(),
+                projectDto.getDeadline(),
                 projectDto.getHours(),
                 projectDto.getOrigin(),
                 projectDto.getUrl()

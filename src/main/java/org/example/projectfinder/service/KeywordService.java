@@ -73,10 +73,10 @@ public class KeywordService {
         return KeywordMapper.toDto(keyword);
     }
 
-    public void deleteKeyword(Long id) {
-        Keyword keyword = keywordRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Keyword", id));
-        keywordRepository.delete(keyword);
+    public void deleteKeyword(String keyword) {
+        Keyword k = keywordRepository.findByKeyword(keyword)
+                .orElseThrow(() -> new RuntimeException("Keyword not found"));
+        keywordRepository.delete(k);
     }
 
     public void deleteKeywords() {

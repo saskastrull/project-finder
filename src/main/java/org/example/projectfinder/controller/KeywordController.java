@@ -53,9 +53,9 @@ public class KeywordController {
         return ResponseEntity.ok(keywordService.updateKeyword(id, keywordDto));
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteKeyword(@PathVariable Long id) {
-        keywordService.deleteKeyword(id);
+    @DeleteMapping("/{keyword}")
+    public ResponseEntity<Void> deleteKeyword(@PathVariable String keyword) {
+        keywordService.deleteKeyword(keyword);
         return ResponseEntity.noContent().build();
     }
 

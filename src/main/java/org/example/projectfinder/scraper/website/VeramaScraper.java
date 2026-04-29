@@ -55,7 +55,7 @@ public class VeramaScraper implements ScraperInterface {
         List<ProjectDto> scrapedProjects = new ArrayList<>();
 
         int page = 0;
-        int totalPages = Integer.MAX_VALUE; // Assume large amount of pages
+        int totalPages = Integer.MAX_VALUE; // Assume large number
 
         while (page < totalPages) {
             try {
@@ -139,7 +139,7 @@ public class VeramaScraper implements ScraperInterface {
 
         // Get expiration (lastDayOfApplications)
         if (node.hasNonNull("lastDayOfApplications")) {
-            dto.setExpiration(parseLocalDate(node.get("lastDayOfApplications").asText()));
+            dto.setDeadline(parseLocalDate(node.get("lastDayOfApplications").asText()));
         }
 
         // Get hoursPerWeek and transform to percentage
@@ -150,14 +150,14 @@ public class VeramaScraper implements ScraperInterface {
         }
 
         // Generate URL, remove "JR-" from systemId since the URLs lack it
-        if (node.hasNonNull("systemId")) {
-            String systemId = node.get("systemId").asText();
+        if (node.hasNonNull("id")) {
+            String id = node.get("id").asText();
 
-            if (systemId.startsWith("JR-")) {
-                systemId = systemId.substring(3);
+            if (id.startsWith("JR-")) {
+                id = id.substring(3);
             }
 
-            dto.setUrl("https://app.verama.com/job-requests/" + systemId);
+            dto.setUrl("https://app.verama.com/job-requests/" + id);
         }
 
         return dto;
