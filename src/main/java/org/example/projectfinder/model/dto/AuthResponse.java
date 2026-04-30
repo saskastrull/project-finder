@@ -6,6 +6,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+/**
+ * Authorization response used in the AuthController.
+ */
 @Getter
 @Setter
 @NoArgsConstructor

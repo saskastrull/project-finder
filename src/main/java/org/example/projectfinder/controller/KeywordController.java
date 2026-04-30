@@ -17,8 +17,7 @@ public class KeywordController {
 
     private final KeywordService keywordService;
 
-    // USER ENDPOINTS
-
+    // USER endpoints
     @GetMapping()
     public ResponseEntity<List<KeywordDto>> getAllKeywords() {
         return ResponseEntity.ok(keywordService.getKeywords());
@@ -29,8 +28,7 @@ public class KeywordController {
         return ResponseEntity.ok(keywordService.getKeywordById(id));
     }
 
-    // ADMIN ENDPOINTS
-
+    // ADMIN endpoints
     @PostMapping
     public ResponseEntity<KeywordDto> createKeyword(
             @Valid @RequestBody KeywordDto keywordDto) {

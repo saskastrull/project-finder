@@ -23,7 +23,6 @@ import java.util.List;
 public class ProjectService {
 
     private final ProjectRepository projectRepository;
-
     private final KeywordRepository keywordRepository;
 
     @Transactional(readOnly = true)

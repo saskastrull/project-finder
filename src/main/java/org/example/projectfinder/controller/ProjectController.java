@@ -17,8 +17,7 @@ public class ProjectController {
 
     private final ProjectService projectService;
 
-    // USER ENDPOINTS
-
+    // USER endpoints
     @GetMapping
     public ResponseEntity<List<ProjectDto>> getProjects(
             @RequestParam(required = false)
@@ -38,8 +37,7 @@ public class ProjectController {
         return ResponseEntity.ok(projectService.getProjectById(id));
     }
 
-    // ADMIN ENDPOINTS
-
+    // ADMIN endpoints
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteProject(@PathVariable Long id) {
         projectService.deleteProject(id);

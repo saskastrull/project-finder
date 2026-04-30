@@ -63,8 +63,6 @@ public class CinodeScraper implements ScraperInterface {
                 List<ProjectDto> pageProjects = parseRows(doc);
                 projects.addAll(pageProjects);
 
-                log.info("[Cinode] Found {} projects on page", pageProjects.size());
-
                 String cursor = extractCursor(doc);
 
                 if (cursor == null || seenCursors.contains(cursor)) {

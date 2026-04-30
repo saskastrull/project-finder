@@ -18,7 +18,7 @@ public class ScraperService {
 
     public void scrapeAll() {
 
-        // Clear database of old projects
+        // Clear database of old projects before storing new ones
         projectService.deleteAllProjects();
 
         for (ScraperInterface scraper : scrapers) {

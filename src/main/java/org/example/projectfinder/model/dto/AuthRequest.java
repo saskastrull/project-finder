@@ -7,6 +7,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+/**
+ * Authorization request used in the AuthController.
+ */
 @Getter
 @Setter
 @NoArgsConstructor

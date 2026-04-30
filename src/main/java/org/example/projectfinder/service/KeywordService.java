@@ -19,7 +19,6 @@ import java.util.stream.Collectors;
 public class KeywordService {
 
     private final KeywordRepository keywordRepository;
-    private final KeywordMapper keywordMapper;
 
     @Transactional(readOnly = true)
     public List<KeywordDto> getKeywords() {
